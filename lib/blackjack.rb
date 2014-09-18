@@ -13,29 +13,68 @@ class Blackjack
   end
 end
 
+class Session
 
-class Deck
-
-  deck = {}
-
-end
-
-class Player
-
-  def deal
-
+  def initialize
+    @deck = Hash.new
+    @player_cards = {}
+    @dealer_cards = {}
+    @move = nil
   end
 
-  hand = []
+  def fill_deck
+    ranks = {
+      "2" => 2,
+      "3" => 3,
+      "4" => 4,
+      "5" => 5,
+      "6" => 6,
+      "7" => 7,
+      "8" => 8,
+      "9" => 9,
+      "10" => 10,
+      "J" => 10,
+      "Q" => 10,
+      "K" => 10,
+      "A" => 1
+    }
+    ranks.each do |rank, value|
+      @deck["♣" + rank] = value
+      @deck["♦" + rank] = value
+      @deck["♥" + rank] = value
+      @deck["♠" + rank] = value
+    end
+  end
 
-end
+  def deal_player
+    card = @deck.keys.sample
+    card_value = @deck[card.to_s]
+    @player_cards[card] = card_value
+  end
 
-class Dealer
+  def deal_dealer
+    card = @deck.keys.sample
+    card_value = @deck[card.to_s]
+    @dealer_cards[card] = card_value
+  end
 
-  hand = []
+  def move
+    puts "Your hand is: #{@player_cards} and the dealer's is #{@dealer_cards}. Would you like to Hit or Stand (enter one)?"
+    @move = gets.chop
+  end
 
-  def deal
-
+  def end_game
+    # if # Bust
+    #   # Code here
+    # elsif # @move == "Hit"
+    #   # Restart cyle
+    # else #Stand
+    #   if # Fill with evaluation criteria. end_game method should return "Won" or "Lost"
+    #     return "Lost"
+    #   else
+    #     return "Won"
+    #   end
+    # end
   end
 
 end
@@ -75,10 +114,17 @@ class Game
   end
 
   def play
-      # Fill in
-      # Define @result here
+      session = Session.new
+      session.fill_deck
+      session.deal_player
+      session.deal_dealer
+      #while nil == @result UNCOMMENT THIS LATER
+        session.deal_player
+        session.deal_dealer
+        session.move
+        @results = session.end_game
+      #end
   end
-
 
   def adjust_winnings
     if @result == "Won"
