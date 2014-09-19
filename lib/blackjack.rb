@@ -11,7 +11,6 @@ class Blackjack
       game.adjust_winnings
       game.play_again?
     end
-    # fail "You need to add some functionality here before you can use this."
   end
 end
 
@@ -90,14 +89,25 @@ class Session
   end
 
   def get_dealer_move
-    if @player_count > 21
-      @dealer_move = "Stand"
+    if @dealer_count > 21
+      @dealer_move = "Bust"
+    elsif @dealer_cards.has_value?(1)
+      if @dealer_count > 16
+        @dealer_move = "Stand"
+      elsif @dealer_count > 11
+        @dealer_move = "Hit"
+      elsif @dealer_count > 6
+        ace = @dealer_cards.key(1)
+        @dealer_cards[ace] = 11
+        @dealer_count = @dealer_count + 10
+        @dealer_move = "Stand"
+      else # 6 or less
+        @dealer_move = "Hit"
+      end
     elsif @dealer_count < 17
       @dealer_move = "Hit"
-    elsif @dealer_count <= 21
+    else #@dealer_count <= 21
       @dealer_move = "Stand"
-    else
-      @dealer_move = "Bust"
     end
   end
 
@@ -108,6 +118,7 @@ class Session
     elsif "Bust" == @dealer_move
       puts "---------------------------------------------------\n\nYou won!\n\nYour hand: #{@player_cards} (#{@player_count})\nDealer's hand: #{@dealer_cards} (#{@dealer_count})\n\n"
       return "Won"
+    # Add Ace Logic Here
     elsif @player_count > @dealer_count
       puts "---------------------------------------------------\n\nYou won!\n\nYour hand: #{@player_cards} (#{@player_count})\nDealer's hand: #{@dealer_cards} (#{@dealer_count})\n\n"
       return "Won"
