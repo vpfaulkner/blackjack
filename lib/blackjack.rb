@@ -74,11 +74,21 @@ class Session
 
   def get_player_move
     if @player_count > 21
-      print "\n---------------------------------------------------\n\nYour hand is: #{@player_cards}. Your count is #{@player_count}\n\n"
+      print "\n---------------------------------------------------\n\nYour hand is: #{@player_cards}\n\n"
       @player_move = "Bust"
     else
       print "\n---------------------------------------------------\n\nYour hand is: #{@player_cards} and the dealer's is #{@dealer_cards}. Would you like to Hit or Stand (enter one)?\n\nChoice: "
       @player_move = gets.chop
+    end
+  end
+
+  def adjust_for_ace
+    if @player_cards.has_value?(1)
+      if @player_count < 12
+        ace = @player_cards.key(1)
+        @player_cards[ace] = 11
+        @player_count = @player_count + 10
+      end
     end
   end
 
@@ -89,7 +99,9 @@ class Session
   end
 
   def get_dealer_move
-    if @dealer_count > 21
+    if @player_count > 21
+      @dealer_move = "Stand"
+    elsif @dealer_count > 21
       @dealer_move = "Bust"
     elsif @dealer_cards.has_value?(1)
       if @dealer_count > 16
@@ -173,7 +185,7 @@ class Game
         session.get_player_count
         session.get_player_move
       end
-      #session.deal_dealer
+      session.adjust_for_ace
       while "Hit" == session.dealer_move
         session.deal_dealer
         session.get_dealer_count
