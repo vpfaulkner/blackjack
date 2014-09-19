@@ -1,9 +1,12 @@
-class Rules
+class Session
 
   def initialize
-    @deck = Hash.new
-    @player_cards = {}
-    @dealer_cards = {}
+  @deck = Hash.new
+  @player_cards = {}
+  @player_count = 0
+  @dealer_cards = {}
+  @dealer_count = 0
+  @move = nil
   end
 
   def fill_deck
@@ -29,31 +32,29 @@ class Rules
       @deck["♥" + rank] = value
       @deck["♠" + rank] = value
     end
-    puts @deck
+
   end
 
   def deal_player
     card = @deck.keys.sample
+    puts card.inspect
     card_value = @deck[card.to_s]
+    puts card_value.inspect
     @player_cards[card] = card_value
+    puts @player_cards.inspect
   end
 
-  def deal_dealer
-    card = @deck.keys.sample
-    card_value = @deck[card.to_s]
-    @dealer_cards[card] = card_value
-  end
-
-  def move
-
-  end
-
-  def end_game
-
+  def get_player_count
+    running_total = 0
+    @player_count = @player_cards.each {|rank, value| running_total = running_total + value}
+    @player_count = running_total
+    puts @player_count
   end
 
 end
 
-rules = Rules.new
-rules.fill_deck
-rules.deal_dealer
+session = Session.new
+session.fill_deck
+session.deal_player
+session.deal_player
+session.get_player_count

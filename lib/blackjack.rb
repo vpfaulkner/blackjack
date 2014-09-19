@@ -14,12 +14,17 @@ class Blackjack
 end
 
 class Session
+  attr_accessor :player_move
+  attr_accessor :dealer_move
 
   def initialize
     @deck = Hash.new
     @player_cards = {}
+    @player_count = 0
     @dealer_cards = {}
-    @move = nil
+    @dealer_count = 0
+    @player_move = "Hit"
+    @dealer_move = "Hit"
   end
 
   def fill_deck
@@ -58,23 +63,50 @@ class Session
     @dealer_cards[card] = card_value
   end
 
-  def move
-    puts "Your hand is: #{@player_cards} and the dealer's is #{@dealer_cards}. Would you like to Hit or Stand (enter one)?"
-    @move = gets.chop
+  def get_player_count
+    running_total = 0
+    @player_count = @player_cards.each {|rank, value| running_total = running_total + value}
+    @player_count = running_total
   end
 
-  def end_game
-    # if # Bust
-    #   # Code here
-    # elsif # @move == "Hit"
-    #   # Restart cyle
-    # else #Stand
-    #   if # Fill with evaluation criteria. end_game method should return "Won" or "Lost"
-    #     return "Lost"
-    #   else
-    #     return "Won"
-    #   end
-    # end
+  def get_player_move
+    if @player_count > 21
+      puts "Your hand is: #{@player_cards}. Your count is #{@player_count} so you busted!"
+      @player_move = "Bust"
+    else
+      puts "Your hand is: #{@player_cards} and the dealer's is #{@dealer_cards}. Would you like to Hit or Stand (enter one)?"
+      @player_move = gets.chop
+    end
+  end
+
+  def get_dealer_count
+    running_total = 0
+    @dealer_count = @dealer_cards.each {|rank, value| running_total = running_total + value}
+    @dealer_count = running_total
+  end
+
+  def get_dealer_move
+    if @player_count > 21
+      @dealer_move = "Stand"
+    elsif @dealer_count < 17
+      @dealer_move = "Hit"
+    elsif @dealer_count < 21
+      @dealer_move = "Stand"
+    else
+      @dealer_move = "Bust"
+    end
+  end
+
+  def evaluate
+    if "Bust" == @player_move
+      return "Lost"
+    elsif "Bust" == @dealer_move
+      return "Won"
+    elsif @player_count > @dealer_count
+      return "Won"
+    else
+      return "Lost"
+    end
   end
 
 end
@@ -91,7 +123,6 @@ class Game
     }
     @wager = nil
     @result = nil
-
   end
 
   def get_name
@@ -118,12 +149,18 @@ class Game
       session.fill_deck
       session.deal_player
       session.deal_dealer
-      #while nil == @result UNCOMMENT THIS LATER
-        session.deal_player
-        session.deal_dealer
-        session.move
-        @results = session.end_game
-      #end
+      while nil == @result
+        while "Hit"  == session.player_move
+          session.deal_player
+          session.get_player_count
+          session.get_player_move
+        end
+        while "Hit" == session.dealer_move
+          session.get_dealer_count
+          session.get_dealer_move
+        end
+        @results = session.evaluate
+      end
   end
 
   def adjust_winnings
