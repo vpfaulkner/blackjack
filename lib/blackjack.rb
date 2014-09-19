@@ -1,3 +1,5 @@
+require 'pry'
+
 class Blackjack
   def run
     game = Game.new
@@ -54,12 +56,14 @@ class Session
   def deal_player
     card = @deck.keys.sample
     card_value = @deck[card.to_s]
+    @deck.delete(card)
     @player_cards[card] = card_value
   end
 
   def deal_dealer
     card = @deck.keys.sample
     card_value = @deck[card.to_s]
+    @deck.delete(card)
     @dealer_cards[card] = card_value
   end
 
@@ -71,10 +75,10 @@ class Session
 
   def get_player_move
     if @player_count > 21
-      puts "Your hand is: #{@player_cards}. Your count is #{@player_count} so you busted!"
+      print "\n---------------------------------------------------\n\nYour hand is: #{@player_cards}. Your count is #{@player_count}\n\n"
       @player_move = "Bust"
     else
-      puts "Your hand is: #{@player_cards} and the dealer's is #{@dealer_cards}. Would you like to Hit or Stand (enter one)?"
+      print "\n---------------------------------------------------\n\nYour hand is: #{@player_cards} and the dealer's is #{@dealer_cards}. Would you like to Hit or Stand (enter one)?\n\nChoice: "
       @player_move = gets.chop
     end
   end
@@ -90,7 +94,7 @@ class Session
       @dealer_move = "Stand"
     elsif @dealer_count < 17
       @dealer_move = "Hit"
-    elsif @dealer_count < 21
+    elsif @dealer_count <= 21
       @dealer_move = "Stand"
     else
       @dealer_move = "Bust"
@@ -99,12 +103,16 @@ class Session
 
   def evaluate
     if "Bust" == @player_move
+      puts "---------------------------------------------------\n\nYou busted!\n\nYour hand: #{@player_cards} (#{@player_count})\nDealer's hand: #{@dealer_cards} (#{@dealer_count})\n\n"
       return "Lost"
     elsif "Bust" == @dealer_move
+      puts "---------------------------------------------------\n\nYou won!\n\nYour hand: #{@player_cards} (#{@player_count})\nDealer's hand: #{@dealer_cards} (#{@dealer_count})\n\n"
       return "Won"
     elsif @player_count > @dealer_count
+      puts "---------------------------------------------------\n\nYou won!\n\nYour hand: #{@player_cards} (#{@player_count})\nDealer's hand: #{@dealer_cards} (#{@dealer_count})\n\n"
       return "Won"
     else
+      puts "You lost.\n\nYour hand: #{@player_cards} (#{@player_count})\nDealer's hand: #{@dealer_cards} (#{@dealer_count})\n"
       return "Lost"
     end
   end
@@ -126,20 +134,20 @@ class Game
   end
 
   def get_name
-    print "Please give me your name: "
+    print "---------------------------------------------------\n\nWhat is your name?\n\nName: "
     @player_name = gets.chomp
     @score[@player_name] = 0
   end
 
   def give_stats
-    puts "Here are your session statistics: \n\n  Name: #{@player_name}\n  Winnings: #{@winnings}\n  Score: #{@score}\n\n"
+    puts "---------------------------------------------------\n\n  Name: #{@player_name}\n  Winnings: $#{@winnings}\n  Score: #{@score}\n\n"
   end
 
   def get_wager
-    print "How much would you like to wager? "
+    print "---------------------------------------------------\n\nHow much would you like to wager?\n\nWager: $"
     @wager = gets.chomp.to_i
     until @wager <= @winnings
-      print "You cannot wager more than your winnings which is #{@winnings}. Please submit another wager: "
+      print "\nYou cannot wager more than your winnings which is #{@winnings}. Please submit another wager\n\nWager: $"
       @wager = gets.chomp.to_i
     end
   end
@@ -149,27 +157,25 @@ class Game
       session.fill_deck
       session.deal_player
       session.deal_dealer
-      while nil == @result
-        while "Hit"  == session.player_move
-          session.deal_player
-          session.get_player_count
-          session.get_player_move
-        end
-        while "Hit" == session.dealer_move
-          session.get_dealer_count
-          session.get_dealer_move
-        end
-        @results = session.evaluate
+      while "Hit"  == session.player_move
+        session.deal_player
+        session.get_player_count
+        session.get_player_move
       end
+      #session.deal_dealer
+      while "Hit" == session.dealer_move
+        session.deal_dealer
+        session.get_dealer_count
+        session.get_dealer_move
+      end
+      @result = session.evaluate
   end
 
   def adjust_winnings
     if @result == "Won"
-      puts "You won!"
       @winnings += @wager
       @score[@player_name] += 1
     else
-      puts "You lost."
       @winnings -= @wager
       @score["Dealer"] += 1
     end
@@ -177,10 +183,10 @@ class Game
 
   def play_again?
     if 0 >= @winnings
-      puts "Sorry--you are out of money! Game over."
+      print "---------------------------------------------------\n\nSorry--you are out of money! Game over.\n\n"
       @game_status = "Over"
     else
-      puts "That was fun. Press Y to play again and N to exit."
+      print "---------------------------------------------------\n\nThat was fun. Press Y to play again and N to exit.\n\nChoice: "
       status = gets.chomp
       @game_status = "Over" if "N" == status
     end
