@@ -74,10 +74,10 @@ class Session
 
   def get_player_move
     if @player_count > 21
-      print "\n---------------------------------------------------\n\nYour hand is: #{@player_cards}\n\n"
+      print "\n---------------------------------------------------\n\nYour hand is: #{@player_cards.keys}\n\n"
       @player_move = "Bust"
     else
-      print "\n---------------------------------------------------\n\nYour hand is: #{@player_cards} and the dealer's is #{@dealer_cards}. Would you like to Hit or Stand (enter one)?\n\nChoice: "
+      print "\n---------------------------------------------------\n\nYour hand is: #{@player_cards.keys} and the dealer's is #{@dealer_cards.keys}. Would you like to Hit or Stand (enter one)?\n\nChoice: "
       @player_move = gets.chop
     end
   end
@@ -125,17 +125,17 @@ class Session
 
   def evaluate
     if "Bust" == @player_move
-      puts "---------------------------------------------------\n\nYou busted!\n\nYour hand: #{@player_cards} (#{@player_count})\nDealer's hand: #{@dealer_cards} (#{@dealer_count})\n\n"
+      puts "---------------------------------------------------\n\nYou busted!\n\nYour hand: #{@player_cards.keys} (#{@player_count})\nDealer's hand: #{@dealer_cards.keys} (#{@dealer_count})\n\n"
       return "Lost"
     elsif "Bust" == @dealer_move
-      puts "---------------------------------------------------\n\nYou won!\n\nYour hand: #{@player_cards} (#{@player_count})\nDealer's hand: #{@dealer_cards} (#{@dealer_count})\n\n"
+      puts "---------------------------------------------------\n\nYou won!\n\nYour hand: #{@player_cards.keys} (#{@player_count})\nDealer's hand: #{@dealer_cards.keys} (#{@dealer_count})\n\n"
       return "Won"
     # Add Ace Logic Here
     elsif @player_count > @dealer_count
-      puts "---------------------------------------------------\n\nYou won!\n\nYour hand: #{@player_cards} (#{@player_count})\nDealer's hand: #{@dealer_cards} (#{@dealer_count})\n\n"
+      puts "---------------------------------------------------\n\nYou won!\n\nYour hand: #{@player_cards.keys} (#{@player_count})\nDealer's hand: #{@dealer_cards.keys} (#{@dealer_count})\n\n"
       return "Won"
     else
-      puts "You lost.\n\nYour hand: #{@player_cards} (#{@player_count})\nDealer's hand: #{@dealer_cards} (#{@dealer_count})\n"
+      puts "You lost.\n\nYour hand: #{@player_cards.keys} (#{@player_count})\nDealer's hand: #{@dealer_cards.keys} (#{@dealer_count})\n"
       return "Lost"
     end
   end
